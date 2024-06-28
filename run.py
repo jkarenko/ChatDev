@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # =========== Copyright 2023 @ CAMEL-AI.org. All Rights Reserved. ===========
+from chatdev.chat_chain import ChatChain
 import argparse
 import logging
 import os
@@ -21,7 +22,6 @@ from camel.typing import ModelType
 root = os.path.dirname(__file__)
 sys.path.append(root)
 
-from chatdev.chat_chain import ChatChain
 
 try:
     from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall
@@ -92,9 +92,10 @@ args = parser.parse_args()
 config_path, config_phase_path, config_role_path = get_config(args.config)
 args2type = {'GPT_3_5_TURBO': ModelType.GPT_3_5_TURBO,
              'GPT_4': ModelType.GPT_4,
-            #  'GPT_4_32K': ModelType.GPT_4_32k,
+             #  'GPT_4_32K': ModelType.GPT_4_32k,
              'GPT_4_TURBO': ModelType.GPT_4_TURBO,
-            #  'GPT_4_TURBO_V': ModelType.GPT_4_TURBO_V
+             #  'GPT_4_TURBO_V': ModelType.GPT_4_TURBO_V
+             'GPT_4O': ModelType.GPT_4O
              }
 if openai_new_api:
     args2type['GPT_3_5_TURBO'] = ModelType.GPT_3_5_TURBO_NEW

@@ -64,7 +64,8 @@ class OpenAIModel(ModelBackend):
         self.model_config_dict = model_config_dict
 
     def run(self, *args, **kwargs):
-        string = "\n".join([message["content"] for message in kwargs["messages"]])
+        string = "\n".join([message["content"]
+                           for message in kwargs["messages"]])
         encoding = tiktoken.encoding_for_model(self.model_type.value)
         num_prompt_tokens = len(encoding.encode(string))
         gap_between_send_receive = 15 * len(kwargs["messages"])
@@ -91,9 +92,13 @@ class OpenAIModel(ModelBackend):
                 "gpt-4-0613": 8192,
                 "gpt-4-32k": 32768,
                 "gpt-4-turbo": 100000,
+                "gpt-4o": 4096,
             }
             num_max_token = num_max_token_map[self.model_type.value]
-            num_max_completion_tokens = num_max_token - num_prompt_tokens
+            if self.model_type.value == "gpt-4o":
+                num_max_completion_tokens = min(4096, 128000 - num_prompt_tokens)
+            else:
+                num_max_completion_tokens = num_max_token - num_prompt_tokens
             self.model_config_dict['max_tokens'] = num_max_completion_tokens
 
             response = client.chat.completions.create(*args, **kwargs, model=self.model_type.value,
@@ -122,9 +127,13 @@ class OpenAIModel(ModelBackend):
                 "gpt-4-0613": 8192,
                 "gpt-4-32k": 32768,
                 "gpt-4-turbo": 100000,
+                "gpt-4o": 4096,
             }
             num_max_token = num_max_token_map[self.model_type.value]
-            num_max_completion_tokens = num_max_token - num_prompt_tokens
+            if self.model_type.value == "gpt-4o":
+                num_max_completion_tokens = min(4096, 128000 - num_prompt_tokens)
+            else:
+                num_max_completion_tokens = num_max_token - num_prompt_tokens
             self.model_config_dict['max_tokens'] = num_max_completion_tokens
 
             response = openai.ChatCompletion.create(*args, **kwargs, model=self.model_type.value,
@@ -182,6 +191,7 @@ class ModelFactory:
             ModelType.GPT_4_32k,
             ModelType.GPT_4_TURBO,
             ModelType.GPT_4_TURBO_V,
+            ModelType.GPT_4O,
             None
         }:
             model_class = OpenAIModel
