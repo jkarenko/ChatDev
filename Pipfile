@@ -23,7 +23,6 @@ beautifulsoup4 = "*"
 faiss-cpu = "*"
 pyyaml = "*"
 easydict = "*"
-scikit-image = "*"
 
 [dev-packages]
 
